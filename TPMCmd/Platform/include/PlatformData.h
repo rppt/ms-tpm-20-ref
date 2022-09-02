@@ -97,6 +97,15 @@ EXTERN unsigned char s_locality;
 #  define FILE_BACKED_NV (VTPM && YES)  // Default: Either YES or NO
 #endif
 
+#if (!defined FILE_BACKED_NV) && (!defined EPHEMERAL_NV)
+#error "Need to specify either FILE_BACKED or EPHEMERAL"
+#endif
+
+// If both are enabled, disable FILE_BACKED_NV
+#if defined(EPHEMERAL_NV)
+#undef FILE_BACKED_NV
+#endif
+
 #if SIMULATION
 #  undef FILE_BACKED_NV
 #  define FILE_BACKED_NV YES

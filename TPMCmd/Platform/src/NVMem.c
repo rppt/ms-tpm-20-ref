@@ -47,6 +47,9 @@
 #if FILE_BACKED_NV
 #  include <stdio.h>
 static FILE* s_NvFile           = NULL;
+#endif
+
+#if FILE_BACKED_NV || EPHEMERAL_NV
 static int   s_NeedsManufacture = FALSE;
 #endif
 
@@ -197,6 +200,8 @@ LIB_EXPORT int _plat__NVEnable(
         s_NeedsManufacture = TRUE;
     }
     assert(NULL != s_NvFile);  // Just in case we are broken for some reason.
+#elif defined(EPHEMERAL_NV)
+    s_NeedsManufacture = TRUE;
 #endif
     // NV contents have been initialized and the error checks have been performed. For
     // simulation purposes, use the signaling interface to indicate if an error is
@@ -364,7 +369,7 @@ LIB_EXPORT void _plat__ClearNvAvail(void)
 // needs to be manufactured.
 LIB_EXPORT int _plat__NVNeedsManufacture(void)
 {
-#if FILE_BACKED_NV
+#if FILE_BACKED_NV || EPHEMERAL_NV
     return s_NeedsManufacture;
 #else
     return FALSE;
